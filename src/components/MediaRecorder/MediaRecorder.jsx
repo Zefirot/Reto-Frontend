@@ -6,7 +6,7 @@ export default function RecordWindow() {
   const myContainer = useRef();
 
   const webCamOn = async () => {
-    const constraints = { audio: true, video: { width: 1280, height: 720 } };
+    const constraints = { audio: true, video:true };
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -63,8 +63,10 @@ export default function RecordWindow() {
 
   return (
     <div>
-      <video ref={myContainer}></video>
-      <button onClick={startRecording}>Start</button>
+      <video ref={myContainer} duration="5"></video>
+  
+
+      <button onClick={startRecording} >Start</button>
       <button onClick={stopRecording}>Stop</button>
       <button onClick={playVideo}>Play Record</button>
     </div>

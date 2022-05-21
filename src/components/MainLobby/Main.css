@@ -1,0 +1,45 @@
+.container{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.containerVideos{
+    display: flex;
+
+}
+
+.videoRecorder:first-child{
+    margin-left: 14%;
+}
+
+.videoRecorder{
+    margin: 20px;
+    width: 245px;
+    height: 393px;
+    background-color: black;
+    border-radius: 10px;
+}
+
+.buttonPlay{
+    background-color:white;
+    margin-top: 140%;
+    margin-right: 70%;
+    margin-bottom: 10%;
+    border-radius: 80%;
+}
+
+.questionConteiner{
+    background-color: lightgray;
+    height: 60px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.textQuestion{
+    padding: 0;
+    margin: 0;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
