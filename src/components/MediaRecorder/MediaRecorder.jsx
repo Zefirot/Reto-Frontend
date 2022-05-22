@@ -1,4 +1,6 @@
 import React, { useRef } from 'react';
+import Button from '@mui/material/Button';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function RecordWindow() {
   let mediaRecorder;
@@ -6,7 +8,7 @@ export default function RecordWindow() {
   const myContainer = useRef();
 
   const webCamOn = async () => {
-    const constraints = { audio: true, video:true };
+    const constraints = { audio: true, video: true };
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -62,13 +64,24 @@ export default function RecordWindow() {
   }
 
   return (
-    <div>
-      <video ref={myContainer} duration="5"></video>
-  
+    <div className='conteinerVideo'>
+      <div className='containerBackButton'>
+        <ArrowBackIcon />
+        <Button id='buttonBack' >Volver</Button>
+      </div>
+      <div className='contianerVideoWithDetails'>
+        <video ref={myContainer} duration="5"></video>
 
-      <button onClick={startRecording} >Start</button>
-      <button onClick={stopRecording}>Stop</button>
-      <button onClick={playVideo}>Play Record</button>
+        <button id='buttonStartRecording' onClick={startRecording} >Start</button>
+        <button onClick={stopRecording}>Stop</button>
+        <button onClick={playVideo}>Play Record</button>
+      </div>
+
+      <div className='containerButtonsLoop'>
+        <Button>Atras</Button>
+        <Button>Siguiente</Button>
+      </div>
+
     </div>
   )
 }

@@ -1,8 +1,36 @@
 video {
     vertical-align: top;
-    --width: 25vw;
-    width: var(--width);
-    height: calc(var(--width) * 0.5625);
+    
+    width: 600px;
+    height: 400px;
     background: #222;
 }
 
+.conteinerVideo{
+    display: flex;
+    flex-direction: column;
+    margin-left: 33%;
+    width: 600px;
+}
+
+.containerButtonsLoop{
+    margin-top: 20%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#buttonBack{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.containerBackButton{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#buttonStartRecording{
+    position: relative;
+    top: -30px;
+}
