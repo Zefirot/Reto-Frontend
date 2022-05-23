@@ -32,12 +32,13 @@ const redButtonRecordingStyle = {
   'left': '1050px',
 }
 
-let mediaRecorder;
-let recordedBlobs;
-let idInterval;
-export default function RecordWindow({ question }) {
 
-  const [videoState, setVideoState] = useState("Start");
+
+export default function RecordWindow({ question, backToMain, goPrev, goNext }) {
+  let mediaRecorder;
+  let recordedBlobs;
+  let idInterval;
+  const [videoState, setVideoState] = useState("Start");  
   const videoRef = useRef();
   const [timeVideo, setTimeVideo] = useState(0);
   
@@ -71,10 +72,6 @@ export default function RecordWindow({ question }) {
         clearInterval(idInterval);
         stopRecording();
       }
-
-      console.log(timeVar)
-
-      
 
     },1000);
     
@@ -144,12 +141,12 @@ export default function RecordWindow({ question }) {
     <div className='conteinerVideo'>
       <div className='containerBackButton'>
         <ArrowBackIcon />
-        <Button id='buttonBack' >Volver</Button>
+        <Button id='buttonBack' onClick={backToMain}>Volver</Button>
       </div>
       <div >
         <video ref={videoRef} ></video>
         <div className='questionConteiner'>
-          <p className='textQuestion'>Hola</p>
+          <p className='textQuestion'>{question}</p>
         </div>
         {videoState === "Start" && videoButtonStart}
 
@@ -163,8 +160,8 @@ export default function RecordWindow({ question }) {
       </div>
 
       <div className='containerButtonsLoop'>
-        <Button>Atras</Button>
-        <Button>Siguiente</Button>
+        <Button onClick={goPrev}>Atras</Button>
+        <Button onClick={goNext}>Siguiente</Button>
       </div>
 
     </div>

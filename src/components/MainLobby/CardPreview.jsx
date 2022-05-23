@@ -10,21 +10,13 @@ const iconButtonStyle = {
 }
 
 export default function CardPreview({ arrayOfQuestions }) {
+    const cont =(index) => {
+        console.log(index)
+    }
+
     return (
         <Fragment>
-            <div className='containerVideos'>
-                {arrayOfQuestions.map(element => {
-                    return (
-                        <div className='videoRecorder'>
-                            <IconButton size="large" sx={iconButtonStyle} >
-                                <PlayCircleFilledIcon fontSize='large'/>
-                            </IconButton >
-                            <div className='questionConteiner'>
-                                <p className='textQuestion'>{element}</p>
-                            </div>
-                        </div>)
-                })}
-            </div>
+            
         </Fragment>
 
     )

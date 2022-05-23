@@ -6,7 +6,7 @@ import "./components/MainLobby/Main.css"
 function App() {
   return (
     <div>
-      <RecordWindow />
+      <Main />
     </div>
   );
 }
