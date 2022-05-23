@@ -1,6 +1,7 @@
 video {
     vertical-align: top;
-    
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
     width: 600px;
     height: 400px;
     background: #222;
@@ -14,7 +15,7 @@ video {
 }
 
 .containerButtonsLoop{
-    margin-top: 20%;
+    margin-top: 0;
     display: flex;
     justify-content: space-between;
 }

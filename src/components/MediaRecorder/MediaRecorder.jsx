@@ -1,12 +1,46 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import IconButton from '@mui/material/IconButton';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import ReplayCircleFilledIcon from '@mui/icons-material/ReplayCircleFilled';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
-export default function RecordWindow() {
-  let mediaRecorder;
-  let recordedBlobs;
-  const myContainer = useRef();
+const buttonStyle = {
+  'color': 'white',
+  'position': 'absolute',
+  'top': '430px',
+  'left': '530px',
+  'width': '50px',
+  'height': '50px'
+}
 
+const textTimeVideoStyle = {
+  'color': 'white',
+  'position': 'absolute',
+  'top': '80px',
+  'left': '1000px',
+  'width': '50px',
+  'height': '50px'
+}
+
+const redButtonRecordingStyle = {
+  'color': 'red',
+  'position': 'absolute',
+  'top': '90px',
+  'left': '1050px',
+}
+
+let mediaRecorder;
+let recordedBlobs;
+let idInterval;
+export default function RecordWindow({ question }) {
+
+  const [videoState, setVideoState] = useState("Start");
+  const videoRef = useRef();
+  const [timeVideo, setTimeVideo] = useState(0);
+  
   const webCamOn = async () => {
     const constraints = { audio: true, video: true };
 
@@ -14,8 +48,8 @@ export default function RecordWindow() {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       window.stream = stream;
 
-      myContainer.current.srcObject = stream;
-      myContainer.current.play()
+      videoRef.current.srcObject = stream;
+      videoRef.current.play()
 
     } catch (e) {
       console.error('navigator.getUserMedia error:', e);
@@ -23,10 +57,27 @@ export default function RecordWindow() {
   };
 
   const startRecording = async () => {
-    await webCamOn()
+    await webCamOn();
 
     recordedBlobs = [];
 
+
+    let timeVar = 0
+    idInterval = setInterval(() => {
+      setTimeVideo(timeVar)
+
+      timeVar++;
+      if (timeVar >= 120){
+        clearInterval(idInterval);
+        stopRecording();
+      }
+
+      console.log(timeVar)
+
+      
+
+    },1000);
+    
     try {
       mediaRecorder = new MediaRecorder(window.stream);
     } catch (e) {
@@ -42,10 +93,15 @@ export default function RecordWindow() {
     mediaRecorder.ondataavailable = handleDataAvailable;
     mediaRecorder.start();
     console.log('MediaRecorder started', mediaRecorder);
+    setVideoState("Stop");
   }
 
   const stopRecording = () => {
+    clearInterval(idInterval);
+    setTimeVideo(0);
+    videoRef.current.srcObject = null; //Se limpia la pantalla
     mediaRecorder.stop();
+    setVideoState("RePlay");
   }
 
   const handleDataAvailable = (event) => {
@@ -56,12 +112,33 @@ export default function RecordWindow() {
 
   const playVideo = () => {
     const superBuffer = new Blob(recordedBlobs);
-    myContainer.current.src = null;
-    myContainer.current.srcObject = null;
-    myContainer.current.src = window.URL.createObjectURL(superBuffer);
-    myContainer.current.controls = true;
-    myContainer.current.play();
+    videoRef.current.src = null;
+    videoRef.current.srcObject = null;
+    videoRef.current.src = window.URL.createObjectURL(superBuffer);
+    videoRef.current.controls = true;
+    videoRef.current.play();
   }
+
+  const time_convert = (num) =>{ 
+  var hours = Math.floor(num / 60);  
+  var minutes = num % 60;
+  return "0"+hours + ":" + minutes;         
+}
+
+  const videoButtonStart = (
+    <IconButton size="large" sx={buttonStyle} onClick={startRecording}>
+      <PlayCircleIcon fontSize="large" />
+    </IconButton>);
+
+  const videoButtonStop = (
+    <IconButton size="large" sx={buttonStyle} onClick={stopRecording}>
+      <StopCircleIcon fontSize="large" />
+    </IconButton>)
+
+  const videoButtonReplay = (
+    <IconButton size="large" sx={buttonStyle} onClick={startRecording}>
+      <ReplayCircleFilledIcon fontSize="large" />
+    </IconButton>)
 
   return (
     <div className='conteinerVideo'>
@@ -69,12 +146,20 @@ export default function RecordWindow() {
         <ArrowBackIcon />
         <Button id='buttonBack' >Volver</Button>
       </div>
-      <div className='contianerVideoWithDetails'>
-        <video ref={myContainer} duration="5"></video>
+      <div >
+        <video ref={videoRef} ></video>
+        <div className='questionConteiner'>
+          <p className='textQuestion'>Hola</p>
+        </div>
+        {videoState === "Start" && videoButtonStart}
 
-        <button id='buttonStartRecording' onClick={startRecording} >Start</button>
-        <button onClick={stopRecording}>Stop</button>
-        <button onClick={playVideo}>Play Record</button>
+        {videoState === "Stop" && videoButtonStop}
+        {videoState === "Stop" &&<p style={textTimeVideoStyle}>{String(time_convert(timeVideo))}</p>}
+        {videoState === "Stop" &&timeVideo%2===0 && <FiberManualRecordIcon sx={redButtonRecordingStyle} />}
+
+        {videoState === "RePlay" && videoButtonReplay}
+
+        <button onClick={playVideo}>Play Record</button> 
       </div>
 
       <div className='containerButtonsLoop'>
