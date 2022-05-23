@@ -33,15 +33,17 @@ const redButtonRecordingStyle = {
 }
 
 
-
-export default function RecordWindow({ question, backToMain, goPrev, goNext }) {
-  let mediaRecorder;
-  let recordedBlobs;
-  let idInterval;
-  const [videoState, setVideoState] = useState("Start");  
+let mediaRecorder;
+let recordedBlobs;
+let idInterval;
+export default function RecordWindow({ question, prevState, prevVideo, backToMain, goPrev, goNext }) {
+  if (prevVideo){
+    recordedBlobs = prevVideo;
+  }
+  const [videoState, setVideoState] = useState(prevState);
   const videoRef = useRef();
   const [timeVideo, setTimeVideo] = useState(0);
-  
+
   const webCamOn = async () => {
     const constraints = { audio: true, video: true };
 
@@ -62,19 +64,18 @@ export default function RecordWindow({ question, backToMain, goPrev, goNext }) {
 
     recordedBlobs = [];
 
-
     let timeVar = 0
     idInterval = setInterval(() => {
       setTimeVideo(timeVar)
 
       timeVar++;
-      if (timeVar >= 120){
+      if (timeVar >= 120) {
         clearInterval(idInterval);
         stopRecording();
       }
 
-    },1000);
-    
+    }, 1000);
+
     try {
       mediaRecorder = new MediaRecorder(window.stream);
     } catch (e) {
@@ -116,11 +117,11 @@ export default function RecordWindow({ question, backToMain, goPrev, goNext }) {
     videoRef.current.play();
   }
 
-  const time_convert = (num) =>{ 
-  var hours = Math.floor(num / 60);  
-  var minutes = num % 60;
-  return "0"+hours + ":" + minutes;         
-}
+  const time_convert = (num) => {
+    var hours = Math.floor(num / 60);
+    var minutes = num % 60;
+    return "0" + hours + ":" + minutes;
+  }
 
   const videoButtonStart = (
     <IconButton size="large" sx={buttonStyle} onClick={startRecording}>
@@ -141,7 +142,7 @@ export default function RecordWindow({ question, backToMain, goPrev, goNext }) {
     <div className='conteinerVideo'>
       <div className='containerBackButton'>
         <ArrowBackIcon />
-        <Button id='buttonBack' onClick={backToMain}>Volver</Button>
+        <Button id='buttonBack' onClick={() => backToMain(videoState, recordedBlobs)}>Volver</Button>
       </div>
       <div >
         <video ref={videoRef} ></video>
@@ -151,12 +152,12 @@ export default function RecordWindow({ question, backToMain, goPrev, goNext }) {
         {videoState === "Start" && videoButtonStart}
 
         {videoState === "Stop" && videoButtonStop}
-        {videoState === "Stop" &&<p style={textTimeVideoStyle}>{String(time_convert(timeVideo))}</p>}
-        {videoState === "Stop" &&timeVideo%2===0 && <FiberManualRecordIcon sx={redButtonRecordingStyle} />}
+        {videoState === "Stop" && <p style={textTimeVideoStyle}>{String(time_convert(timeVideo))}</p>}
+        {videoState === "Stop" && timeVideo % 2 === 0 && <FiberManualRecordIcon sx={redButtonRecordingStyle} />}
 
         {videoState === "RePlay" && videoButtonReplay}
 
-        <button onClick={playVideo}>Play Record</button> 
+        <button onClick={playVideo}>Play Record</button>
       </div>
 
       <div className='containerButtonsLoop'>

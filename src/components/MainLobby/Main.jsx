@@ -10,15 +10,30 @@ const iconButtonStyle = {
     'border-radius': '80%'
 }
 
+
+let videosStatus = {
+    0 : {
+        Status:"Start",
+        VideoRecord:[]
+    },
+    1 : {
+        Status:"Start",
+        VideoRecord:[]
+    },
+    2 : {
+        Status:"Start",
+        VideoRecord:[]
+    },
+    3 : {
+        Status:"Start",
+        VideoRecord:[]
+    }
+}
 export default function Main() {
     const arrayOfQuestions = ["Por que te presentas a esta entrevista?",
         "Del 1 al 10 que tan extrovertido te consideras?",
         "Hace cuanto tiempo estas programando en NodeJS?",
         "Que te motiva dia a dia a mantenerte actualizado en esta industria?"];
-
-    let videosStatus = {
-        
-    }
 
     const [mediaShowNumber, setMediaNumber] = useState(-1);
 
@@ -26,7 +41,14 @@ export default function Main() {
         setMediaNumber(index);
     }
 
-    const backToMain = () => {
+    const modifyVideoStatus = (status, video) => {
+        videosStatus[mediaShowNumber].Status = status
+        videosStatus[mediaShowNumber].VideoRecord = video
+        console.log(videosStatus)
+    }
+
+    const backToMain = (status, video) => {
+        modifyVideoStatus(status, video)
         setMediaNumber(-1);
     }
 
@@ -69,24 +91,11 @@ export default function Main() {
                     </div>
                 </div>
             }
-            {mediaShowNumber === 0 &&
+            {mediaShowNumber >= 0 &&
                 <MediaRecorder question={arrayOfQuestions[mediaShowNumber]}
                     backToMain={backToMain}
-                    goPrev={goPrev}
-                    goNext={goNext} />}
-            {mediaShowNumber === 1 &&
-                <MediaRecorder question={arrayOfQuestions[mediaShowNumber]}
-                    backToMain={backToMain}
-                    goPrev={goPrev}
-                    goNext={goNext} />}
-            {mediaShowNumber === 2 &&
-                <MediaRecorder question={arrayOfQuestions[mediaShowNumber]}
-                    backToMain={backToMain}
-                    goPrev={goPrev}
-                    goNext={goNext} />}
-            {mediaShowNumber === 3 &&
-                <MediaRecorder question={arrayOfQuestions[mediaShowNumber]}
-                    backToMain={backToMain}
+                    prevState={videosStatus[mediaShowNumber].Status}
+                    prevVideo={videosStatus[mediaShowNumber].VideoRecord}
                     goPrev={goPrev}
                     goNext={goNext} />}
         </Fragment>
