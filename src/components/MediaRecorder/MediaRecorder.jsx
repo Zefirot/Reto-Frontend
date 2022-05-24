@@ -7,6 +7,9 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import ReplayCircleFilledIcon from '@mui/icons-material/ReplayCircleFilled';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
+/**Los botones que se despliegan en la grabacion tiene posicion absoluta, por cuestiones de tiempo
+ * no encontre una forma rapida de poder implementar una mejor forma de posicionar los botones dentro
+ * de la caja de video **/
 const buttonStyle = {
   'color': 'white',
   'position': 'absolute',
@@ -36,7 +39,7 @@ const redButtonRecordingStyle = {
 let mediaRecorder;
 let recordedBlobs;
 let idInterval;
-export default function RecordWindow({ question, prevState, prevVideo, backToMain, goPrev, goNext }) {
+export default function RecordWindow({ question, prevState, prevVideo, backToMain, goPrev, goNext, isTheLastVideo }) {
   if (prevVideo){
     recordedBlobs = prevVideo;
   }
@@ -69,7 +72,7 @@ export default function RecordWindow({ question, prevState, prevVideo, backToMai
       setTimeVideo(timeVar)
 
       timeVar++;
-      if (timeVar >= 120) {
+      if (timeVar >= 120) { //Esto es el tiempo limite del video pero solo es una aproximacion
         clearInterval(idInterval);
         stopRecording();
       }
@@ -97,30 +100,30 @@ export default function RecordWindow({ question, prevState, prevVideo, backToMai
   const stopRecording = () => {
     clearInterval(idInterval);
     setTimeVideo(0);
-    videoRef.current.srcObject = null; //Se limpia la pantalla
+    videoRef.current.srcObject = null; //Se deja de transmitir la pantalla
     mediaRecorder.stop();
     setVideoState("RePlay");
   }
 
   const handleDataAvailable = (event) => {
     if (event.data && event.data.size > 0) {
-      recordedBlobs.push(event.data);
+      recordedBlobs=event.data;
     }
   }
 
-  const playVideo = () => {
-    const superBuffer = new Blob(recordedBlobs);
+  const playVideo = () => { //Esta funcion solo existe para corroborar que el video se grabo efectivamente
+    const superBuffer = new Blob(Array(recordedBlobs));
     videoRef.current.src = null;
     videoRef.current.srcObject = null;
     videoRef.current.src = window.URL.createObjectURL(superBuffer);
-    videoRef.current.controls = true;
+    videoRef.current.controls = false;
     videoRef.current.play();
   }
 
-  const time_convert = (num) => {
-    var hours = Math.floor(num / 60);
-    var minutes = num % 60;
-    return "0" + hours + ":" + minutes;
+  const time_convert = (num) => { //Funcion que se usa para convertir el contador en minutos y segundos
+    let minutes = Math.floor(num / 60);
+    let seconds = num % 60;
+    return "0" + minutes + ":" + seconds;
   }
 
   const videoButtonStart = (
@@ -157,12 +160,14 @@ export default function RecordWindow({ question, prevState, prevVideo, backToMai
 
         {videoState === "RePlay" && videoButtonReplay}
 
-        <button onClick={playVideo}>Play Record</button>
       </div>
 
       <div className='containerButtonsLoop'>
-        <Button onClick={goPrev}>Atras</Button>
-        <Button onClick={goNext}>Siguiente</Button>
+        <Button onClick={() => goPrev(videoState, recordedBlobs)}>Atras</Button>
+        {isTheLastVideo && videoState === "RePlay" ?
+        <Button onClick={() => backToMain(videoState, recordedBlobs)}>Terminar</Button>
+        :
+        <Button onClick={() =>goNext(videoState, recordedBlobs)}>Siguiente</Button>}
       </div>
 
     </div>
